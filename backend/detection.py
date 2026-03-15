@@ -35,16 +35,52 @@ def analyze_expression(frame, person):
     emotion = np.random.choice(emotions)
     return emotion
 
+def detect_objects(frame, person):
+    # Simple object detection: look for knives or weapons
+    # Using Haar cascade for knives (assuming we have one, but OpenCV doesn't have built-in for knives)
+    # Placeholder: random detection
+    objects = []
+    if np.random.rand() > 0.7:  # 30% chance
+        objects.append('knife')
+    if np.random.rand() > 0.8:
+        objects.append('gun')
+    return objects
+
+def analyze_behavior(person):
+    # Placeholder for behavior: based on position or movement
+    # Since single frame, assume static
+    behaviors = ['standing', 'walking', 'running', 'aggressive']
+    behavior = np.random.choice(behaviors)
+    return behavior
+
 def assess_danger(persons, frame):
     dangers = []
     for person in persons:
         expression = analyze_expression(frame, person)
-        # Simple rule: if angry, higher danger
+        objects = detect_objects(frame, person)
+        behavior = analyze_behavior(person)
+        
+        # Danger assessment logic
+        danger_score = 0
         if expression == 'angry':
+            danger_score += 3
+        if 'knife' in objects or 'gun' in objects:
+            danger_score += 5
+        if behavior == 'aggressive':
+            danger_score += 2
+        
+        if danger_score >= 5:
             danger_level = 'high'
-        elif expression in ['sad', 'surprised']:
+        elif danger_score >= 2:
             danger_level = 'medium'
         else:
             danger_level = 'low'
-        dangers.append({'person': person, 'danger': danger_level, 'expression': expression})
+        
+        dangers.append({
+            'person': person, 
+            'danger': danger_level, 
+            'expression': expression,
+            'objects': objects,
+            'behavior': behavior
+        })
     return dangers
