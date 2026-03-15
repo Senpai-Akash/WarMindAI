@@ -18,7 +18,15 @@ def detect_persons(frame):
 def analyze_expression(frame, person):
     # Extract face from person bounding box
     x, y, w, h = person['x'], person['y'], person['w'], person['h']
+    # Ensure within bounds
+    x = max(0, x)
+    y = max(0, y)
+    w = min(w, frame.shape[1] - x)
+    h = min(h, frame.shape[0] - y)
     face_img = frame[y:y+h, x:x+w]
+    
+    if face_img.size == 0:
+        return 'neutral'
     
     # Find face encodings
     face_locations = face_recognition.face_locations(face_img)
